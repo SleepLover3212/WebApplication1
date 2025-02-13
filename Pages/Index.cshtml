@@ -1,0 +1,36 @@
+﻿@page
+@model WebApplication1.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container text-center mt-5">
+    <h1 class="display-4">Welcome to Bookworms Online</h1>
+
+    @if (Model.CurrentUser != null)
+    {
+        <div class="card p-4 mt-4 shadow-sm">
+            <h3>User Information</h3>
+            <p><strong>Name:</strong> @Model.CurrentUser.FirstName @Model.CurrentUser.LastName</p>
+            <p><strong>Email Address:</strong> @Model.CurrentUser.Email</p>
+            <p><strong>Mobile Number:</strong> @Model.CurrentUser.MobileNo</p>
+            <p><strong>Billing Address:</strong> @Model.CurrentUser.BillingAddress</p>
+            <p><strong>Shipping Address:</strong> @Model.CurrentUser.ShippingAddress</p>
+            <p><strong>Credit Card Number:</strong> @Model.DecryptedCreditCard</p>
+
+            <h3>Profile Photo</h3>
+            @if (Model.CurrentUser.Photo != null)
+            {
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.CurrentUser.Photo)" alt="User Photo" class="img-thumbnail" width="200" />
+            }
+            else
+            {
+                <p>No photo uploaded.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-danger">User data could not be retrieved.</p>
+    }
+</div>
