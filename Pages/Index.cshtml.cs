@@ -15,12 +15,11 @@ namespace WebApplication1.Pages
         private readonly ILogger<IndexModel> _logger;
         private readonly IDataProtector _protector;
 
-        // Constructor uses the global IDataProtectionProvider to create a protector with "MySecretKey"
         public IndexModel(UserManager<Member> userManager, ILogger<IndexModel> logger, IDataProtectionProvider protectionProvider)
         {
             _userManager = userManager;
             _logger = logger;
-            _protector = protectionProvider.CreateProtector("MySecretKey"); // Global secret key used everywhere
+            _protector = protectionProvider.CreateProtector("MySecretKey");
         }
 
         public Member CurrentUser { get; private set; }
