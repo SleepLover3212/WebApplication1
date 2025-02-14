@@ -9,6 +9,14 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<AuthDbContext>();
 builder.Services.AddDataProtection();
 builder.Services.AddIdentity<Member, IdentityRole>().AddEntityFrameworkStores<AuthDbContext>();
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddDistributedMemoryCache(); //save session in memory
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(30);
+});
 
 // Configure built-in password complexity settings
 builder.Services.Configure<IdentityOptions>(options =>
@@ -50,6 +58,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseSession();
 
 app.UseStatusCodePagesWithRedirects("/errors/{0}");
 
