@@ -36,7 +36,6 @@ namespace WebApplication1.Pages
                 return Page();
             }
 
-            // Get the current user
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -44,7 +43,6 @@ namespace WebApplication1.Pages
                 return RedirectToPage("/Login");
             }
 
-            // Change the password
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
@@ -55,7 +53,6 @@ namespace WebApplication1.Pages
                 return Page();
             }
 
-            // Refresh sign in to update the security stamp.
             await _signInManager.RefreshSignInAsync(user);
             TempData["StatusMessage"] = "Your password has been changed.";
             return RedirectToPage("Index");
