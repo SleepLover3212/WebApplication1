@@ -12,17 +12,20 @@ namespace WebApplication1.Pages
         private UserManager<Member> userManager { get; }
         private SignInManager<Member> signInManager { get; }
 
+        private readonly IDataProtector _protector;
 
         [BindProperty]
         public Register RModel { get; set; }
 
         public RegisterModel(
             UserManager<Member> userManager, 
-            SignInManager<Member> signInManager
+            SignInManager<Member> signInManager,
+            IDataProtectionProvider protectionProvider
             )
         {
             this.userManager = userManager; 
             this.signInManager = signInManager;
+            _protector = protectionProvider.CreateProtector("MySecretKey");
         }
 
         public void OnGet()
@@ -44,14 +47,12 @@ namespace WebApplication1.Pages
                     }
                 }
 
-                var dataProtectionProvider = DataProtectionProvider.Create("EncryptData");
-                var protector = dataProtectionProvider.CreateProtector("MySecretKey");
 
                 var user = new Member
                 {
                     FirstName = RModel.FirstName,
                     LastName = RModel.LastName,
-                    CreditCardNo = protector.Protect(RModel.CreditCardNo),
+                    CreditCardNo = _protector.Protect(RModel.CreditCardNo),
                     MobileNo = RModel.MobileNo,
                     BillingAddress = RModel.BillingAddress,
                     ShippingAddress = RModel.ShippingAddress,

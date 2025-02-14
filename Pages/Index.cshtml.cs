@@ -15,33 +15,16 @@ namespace WebApplication1.Pages
         private readonly ILogger<IndexModel> _logger;
         private readonly IDataProtector _protector;
 
+        // Constructor uses the global IDataProtectionProvider to create a protector with "MySecretKey"
         public IndexModel(UserManager<Member> userManager, ILogger<IndexModel> logger, IDataProtectionProvider protectionProvider)
         {
             _userManager = userManager;
             _logger = logger;
-            _protector = protectionProvider.CreateProtector("MySecretKey");
+            _protector = protectionProvider.CreateProtector("MySecretKey"); // Global secret key used everywhere
         }
 
-        public Member CurrentUser { get; set; }
-        public string DecryptedCreditCard { get; set; }
-
-        public string Decrypt(string encryptedText)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(encryptedText))
-                {
-                    return "No data to decrypt.";
-                }
-
-                return _protector.Unprotect(encryptedText);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Decryption failed: {ex.Message}");
-                return "Decryption failed";
-            }
-        }
+        public Member CurrentUser { get; private set; }
+        public string DecryptedCreditCard { get; private set; }
 
         public async Task OnGetAsync()
         {
@@ -50,7 +33,16 @@ namespace WebApplication1.Pages
 
             if (CurrentUser != null)
             {
-                DecryptedCreditCard = Decrypt(CurrentUser.CreditCardNo);
+                try
+                {
+                    // Decrypt the Credit Card Number using the global protector
+                    DecryptedCreditCard = _protector.Unprotect(CurrentUser.CreditCardNo);
+                }
+                catch (System.Exception ex)
+                {
+                    _logger.LogError($"Decryption failed: {ex.Message}");
+                    DecryptedCreditCard = "Decryption failed";
+                }
             }
             else
             {
